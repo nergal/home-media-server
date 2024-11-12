@@ -1,59 +1,123 @@
-version: "2.1"
 services:
-  flexget:
-    image: cpoppema/docker-flexget
-    container_name: flexget
-    environment:
-      - PGID=1000
-      - PUID=1000
-      - WEB_PASSWD=yourhorriblesecret
-      - TORRENT_PLUGIN=transmission
-      - TZ=Europe/London
-      - FLEXGET_LOG_LEVEL=debug
+  whisparr:
+    image: hotio/whisparr:latest
+    container_name: whisparr
+    volumes:
+      - ./config/whisparr:/config
+      - ./media/downloads:/downloads
+      - ./media/whisparr:/data
     ports:
-      - 5050:5050
-    volumes:
-      - ./services/flexget:/config
-      - ./torrents:/downloads
+      - 6969:6969
     restart: unless-stopped
-  transmission:
-    image: linuxserver/transmission
-    container_name: transmission
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/London
-      - TRANSMISSION_WEB_HOME=/combustion-release/
-      - USER=flexger-user
-      - PASS=flexger-password
+
+  jackett:
+    image: linuxserver/jackett:latest
+    container_name: jackett
     volumes:
-      - ./services/transmission:/config
-      - ./library:/downloads
-      - ./torrents:/watch
+      - ./config/jackett:/config
+    ports:
+      - 9117:9117
+    restart: unless-stopped
+
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - UID=${PUID}
+      - GID=${PGID}
+    volumes:
+      - ./config/jellyfin:/config
+      - ./media:/mnt/media
+    ports:
+      - 8096:8096
+      - 8920:8920
+    devices:
+      - /dev/dri:/dev/dri # VAAPI/NVDEC/NVENC render nodes
+      - /dev/vchiq:/dev/vchiq # MMAL/OMX on Raspberry Pi
+    restart: on-failure
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: docker
+    ports:
+      - "9443:9443"
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: always
+
+  rpxy:
+    image: jqtype/rpxy
+    container_name: proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/rpxy:/rpxy/config
+    restart: unless-stopped
+
+  transmission:
+    image: linuxserver/transmission:latest
+    container_name: torrent
+    volumes:
+      - ./config/transmission:/config
+      - ./media/downloads:/downloads
+      - ./media/watch:/watch
     ports:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
     restart: unless-stopped
-  plex:
-    image: linuxserver/plex
-    container_name: plex
-    # network_mode: host
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - VERSION=docker
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: sonarr
     volumes:
-      - ./services/plex:/config
-      - ./library:/tv
+      - ./config/sonarr:/config
+      - ./media/downloads:/downloads
+      - ./media/tv:/tv
     ports:
-      - 32400:32400
-      - 1900:1900/udp
-      - 3005:3005
-      - 8324:8324
-      - 32410:32410/udp
-      - 32412:32412/udp
-      - 32413:32413/udp
-      - 32414:32414/udp
-      - 32469:32469
+      - 8989:8989
     restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr:latest
+    container_name: radarr
+    volumes:
+      - ./config/radarr:/config
+      - ./media/downloads:/downloads
+      - ./media/movies:/movies
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  prowlarr:
+    image: linuxserver/prowlarr:latest
+    container_name: prowlarr
+    volumes:
+      - ./config/prowlarr:/config
+      - ./media/downloads:/downloads
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
+  emby:
+    image: emby/embyserver_arm64v8:latest
+    container_name: emby
+    environment:
+      - UID=${PUID}
+      - GID=${PGID}
+    volumes:
+      - ./config/emby:/config
+      - ./media:/mnt/media
+    ports:
+      - 8096:8096
+      - 8920:8920
+    devices:
+      - /dev/dri:/dev/dri # VAAPI/NVDEC/NVENC render nodes
+      - /dev/vchiq:/dev/vchiq # MMAL/OMX on Raspberry Pi
+    restart: on-failure
+
+volumes:
+  portainer_data:

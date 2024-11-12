@@ -1,0 +1,12 @@
+{
+  "download-dir": "/downloads",
+  "incomplete-dir": "/downloads",
+  "incomplete-dir-enabled": true,
+  "message-level": 1,
+  "preallocation": 1,
+  "ratio-limit": 2,
+  "ratio-limit-enabled": true,
+  "rpc-bind-address": "0.0.0.0",
+  "torrent-added-verify-mode": "fast",
+  "umask": "022"
+}

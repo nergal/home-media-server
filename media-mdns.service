@@ -1,0 +1,15 @@
+[Unit]
+Description=Avahi/mDNS CNAME publisher for media devices
+After=network.target avahi-daemon.service
+
+[Service]
+User=nergal
+Type=simple
+WorkingDirectory=/home/nergal
+ExecStart=/home/nergal/setup-media-mdns.sh
+Restart=no
+PrivateTmp=true
+PrivateDevices=true
+
+[Install]
+WantedBy=multi-user.target

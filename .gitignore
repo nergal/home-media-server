@@ -1,18 +1,2 @@
-library/*
-!library/.gitkeep
-
-services/flexget/*
-!services/flexget/config.yml
-!services/flexget/*.yml-dist
-
-services/transmission/*
-!services/transmission/.gitkeep
-!services/transmission/settings.json
-
-services/plex/Library/Application Support/Plex Media Server/*
-!services/plex/Library/Application Support/Plex Media Server/*.xml
-
-torrents/*
-!torrents/.gitkeep
-
-.DS_*
+.env
+config/

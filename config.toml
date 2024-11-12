@@ -1,0 +1,32 @@
+listen_port = 80
+log_level = "info"
+log_target = "stdout"
+
+[apps.emby]
+server_name = 'emby.MacBook-Pro-Artem.local.local'
+reverse_proxy = [{ upstream = [{ location = 'emby:8096' }] }]
+
+[apps.jackett]
+server_name = 'jackett.MacBook-Pro-Artem.local.local'
+reverse_proxy = [{ upstream = [{ location = 'jackett:9117' }] }]
+
+[apps.prowlarr]
+server_name = 'prowlarr.MacBook-Pro-Artem.local.local'
+reverse_proxy = [{ upstream = [{ location = 'prowlarr:9696' }] }]
+
+[apps.radarr]
+server_name = 'radarr.MacBook-Pro-Artem.local.local'
+reverse_proxy = [{ upstream = [{ location = 'radarr:7878' }] }]
+
+[apps.sonarr]
+server_name = 'sonarr.MacBook-Pro-Artem.local.local'
+reverse_proxy = [{ upstream = [{ location = 'sonarr:8989' }] }]
+
+[apps.transmission]
+server_name = 'torrent.MacBook-Pro-Artem.local.local'
+reverse_proxy = [{ upstream = [{ location = 'transmission:9091' }] }]
+
+[apps.portainer]
+server_name = 'docker.MacBook-Pro-Artem.local.local'
+reverse_proxy = [{ upstream = [{ location = 'portainer:9443' }] }]
+
